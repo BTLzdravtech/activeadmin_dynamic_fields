@@ -36,7 +36,7 @@ function dfSetupField(el) {
   args.eq = el.data('eq');
   args.not = el.data('not');
   args.fn = el.data('function');
-  if(el.data('target')) target = el.closest('fieldset').find(el.data('target'));  // closest find for has many associations
+  if(el.data('target')) target = el.closest('form').find(el.data('target'));  // closest find for has many associations
   else if(el.data('gtarget')) target = $(el.data('gtarget'));
   if(action == 'hide') {
     if(dfEvalCondition(el, args, false)) target.hide();
@@ -156,14 +156,14 @@ function dfUpdateField() {
 }
 
 // Init
-$(document).ready(function() {
+function initDynamicFields() {
   // Setup dynamic fields
-  $('.active_admin .input [data-if], .active_admin .input [data-function], .active_admin .input [data-eq], .active_admin .input [data-not]').each(function() {
+  $('.active_admin .inputs [data-if], .active_admin .inputs [data-function], .active_admin .inputs [data-eq], .active_admin .inputs [data-not]').each(function() {
     dfSetupField($(this));
   });
   // Setup dynamic fields for has many associations
   $('.active_admin .has_many_container').on('has_many_add:after', function(e, fieldset, container) {
-    $('.active_admin .input [data-if], .active_admin .input [data-function], .active_admin .input [data-eq], .active_admin .input [data-not]').each(function() {
+    $('.active_admin .inputs [data-if], .active_admin .inputs [data-function], .active_admin .inputs [data-eq], .active_admin .inputs [data-not]').each(function() {
       dfSetupField($(this));
     });
   });
@@ -206,4 +206,4 @@ $(document).ready(function() {
   $('[data-field][data-field-type="select"][data-save-url]').each(function() {
     $(this).on('change', $.proxy(dfUpdateField, $(this)));
   });
-});
+}
