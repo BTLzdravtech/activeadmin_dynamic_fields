@@ -20,10 +20,20 @@ function dfEvalCondition(el, args, on_change) {
     return on_change;
   }
   else if(args.eq) {
-    return el.val() == args.eq;
+    if (args.eq.indexOf('|') == -1) {
+      return el.val() == args.eq;
+    } else {
+      var multiArgs = args.eq.split('|');
+      return multiArgs.indexOf(el.val());
+    }
   }
   else if(args.not) {
-    return el.val() != args.not;
+    if (args.eq.indexOf('|') == -1) {
+      return el.val() != args.not;
+    } else {
+      var multiArgs = args.eq.split('|');
+      return ((multiArgs.indexOf(el.val()) == -1) ? true : false)
+    }
   }
   return undefined;
 }
@@ -36,37 +46,87 @@ function dfSetupField(el) {
   args.eq = el.data('eq');
   args.not = el.data('not');
   args.fn = el.data('function');
-  if(el.data('target')) target = el.closest('form').find(el.data('target'));  // closest find for has many associations
+  if(el.data('target')) target = el.closest('form').find(el.data('target'));
   else if(el.data('gtarget')) target = $(el.data('gtarget'));
   if(action == 'hide') {
-    if(dfEvalCondition(el, args, false)) target.hide();
-    else target.show();
+    var result = dfEvalCondition(el, args, false);
+    if (typeof result === "boolean"){
+      result ? target.hide() : target.show()
+    } else if(typeof result === "number") {
+      target.each(function(index) {
+        index == result ? target.eq(index).hide() : target.eq(index).show()
+      });
+    }
     el.on('change', function(event) {
-      if(dfEvalCondition($(this), args, true)) target.hide();
-      else target.show();
+      var result = dfEvalCondition($(this), args, true);
+      if (typeof result === "boolean"){
+        result ? target.hide() : target.show()
+      } else if(typeof result === "number") {
+        target.each(function(index) {
+          index == result ? target.eq(index).hide() : target.eq(index).show()
+        });
+      }
     });
   }
   else if(action == 'slide') {
-    if(dfEvalCondition(el, args, false)) target.slideDown();
-    else target.slideUp();
+    var result = dfEvalCondition(el, args, false);
+    if (typeof result === "boolean"){
+      result ? target.slideDown() : target.slideUp()
+    } else if(typeof result === "number") {
+      target.each(function(index) {
+        index == result ? target.eq(index).slideDown() : target.eq(index).slideUp()
+      });
+    }
     el.on('change', function(event) {
-      if(dfEvalCondition($(this), args, true)) target.slideDown();
-      else target.slideUp();
+      var result = dfEvalCondition($(this), args, true);
+      if (typeof result === "boolean"){
+        result ? target.slideDown() : target.slideUp()
+      } else if(typeof result === "number") {
+        target.each(function(index) {
+          index == result ? target.eq(index).slideDown() : target.eq(index).slideUp()
+        });
+      }
     });
   }
   else if(action == 'fade') {
-    if(dfEvalCondition(el, args, false)) target.fadeIn();
-    else target.fadeOut();
+    var result = dfEvalCondition(el, args, false);
+    if (typeof result === "boolean"){
+      result ? target.fadeIn() : target.fadeOut()
+    } else if(typeof result === "number") {
+      target.each(function(index) {
+        index == result ? target.eq(index).fadeIn() : target.eq(index).fadeOut()
+      });
+    }
     el.on('change', function(event) {
-      if(dfEvalCondition($(this), args, true)) target.fadeIn();
-      else target.fadeOut();
+      var result = dfEvalCondition($(this), args, true);
+      if (typeof result === "boolean"){
+        result ? target.fadeIn() : target.fadeOut()
+      } else if(typeof result === "number") {
+        target.each(function(index) {
+          index == result ? target.eq(index).fadeIn() : target.eq(index).fadeOut()
+        });
+      }
     });
   }
   else if(action.substr(0, 8) == 'setValue') {
     var val = action.substr(8).trim();
-    if(dfEvalCondition(el, args, false)) dfSetValue(target, val);
+    var result = dfEvalCondition(el, args, false);
+    if (typeof result === "boolean"){
+      if (result) dfSetValue(target, val);
+    } else if(typeof result === "number") {
+      target.each(function(index) {
+        if (index == result) dfSetValue(target.eq(index), val);
+      });
+    }
     el.on('change', function(event) {
-      if(dfEvalCondition($(this), args, true)) dfSetValue(target, val);
+      var result = dfEvalCondition($(this), args, true);
+      if (typeof result === "boolean"){
+        if (result) dfSetValue(target, val);
+      } else if(typeof result === "number") {
+        target.each(function(index) {
+          if (index == result) dfSetValue(target.eq(index), val);
+        });
+      }
     });
   }
   else if(action.substr(0, 8) == 'callback') {
@@ -81,11 +141,23 @@ function dfSetupField(el) {
   }
   else if(action.substr(0, 8) == 'addClass') {
     var classes = action.substr(8).trim();
-    if(dfEvalCondition(el, args, false)) target.removeClass(classes);
-    else target.addClass(classes);
+    var result = dfEvalCondition(el, args, false);
+    if (typeof result === "boolean"){
+      result ? target.removeClass(classes) : target.addClass(classes)
+    } else if(typeof result === "number") {
+      target.each(function(index) {
+        index == result ? target.eq(index).fadeIn() : target.eq(index).fadeOut()
+      });
+    }
     el.on('change', function(event) {
-      if(dfEvalCondition($(this), args, true)) target.removeClass(classes);
-      else target.addClass(classes);
+      var result = dfEvalCondition($(this), args, true);
+      if (typeof result === "boolean"){
+        result ? target.removeClass(classes) : target.addClass(classes)
+      } else if(typeof result === "number") {
+        target.each(function(index) {
+          index == result ? target.eq(index).removeClass(classes) : target.eq(index).addClass(classes)
+        });
+      }
     });
   }
   else if(args.fn) {  // function without action
