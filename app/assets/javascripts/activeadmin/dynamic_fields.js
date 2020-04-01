@@ -5,10 +5,10 @@ function dfEvalCondition(el, args, on_change) {
     else console.log('Warning - activeadmin_dynamic_fields: ' + args.fn + '() not available [1]');
   }
   else if(args.if == 'checked') {
-    return el.is(':checked');
+    return el.parent().find('input[type=checkbox]').is(':checked');
   }
   else if(args.if == 'not_checked') {
-    return !el.is(':checked');
+    return !el.parent().find('input[type=checkbox]').is(':checked');
   }
   else if(args.if == 'blank') {
     return el.val().length === 0 || !el.val().trim();
@@ -51,19 +51,45 @@ function dfSetupField(el) {
   if(action == 'hide') {
     var result = dfEvalCondition(el, args, false);
     if (typeof result === "boolean"){
-      result ? target.hide() : target.show()
+      if (result) {
+        target.hide()
+        target.find('.validatebox-text').validatebox('options').novalidate = true
+      } else {
+        target.show()
+        target.find('.validatebox-text').validatebox('options').novalidate = false
+      }
     } else if(typeof result === "number") {
       target.each(function(index) {
-        index == result ? target.eq(index).hide() : target.eq(index).show()
+        if (index == result) {
+          target.eq(index).hide()
+          target.eq(index).find('.validatebox-text').validatebox('options').novalidate = true
+        } else {
+          target.eq(index).show()
+          target.eq(index).find('.validatebox-text').validatebox('options').novalidate = false
+        }
+        // index == result ? target.eq(index).hide() : target.eq(index).show()
       });
     }
     el.on('change', function(event) {
       var result = dfEvalCondition($(this), args, true);
       if (typeof result === "boolean"){
-        result ? target.hide() : target.show()
+        if (result) {
+          target.hide()
+          target.find('.validatebox-text').validatebox('options').novalidate = true
+        } else {
+          target.show()
+          target.find('.validatebox-text').validatebox('options').novalidate = false
+        }
       } else if(typeof result === "number") {
         target.each(function(index) {
-          index == result ? target.eq(index).hide() : target.eq(index).show()
+          if (index == result) {
+            target.eq(index).hide()
+            target.eq(index).find('.validatebox-text').validatebox('options').novalidate = true
+          } else {
+            target.eq(index).show()
+            target.eq(index).find('.validatebox-text').validatebox('options').novalidate = false
+          }
+          // index == result ? target.eq(index).hide() : target.eq(index).show()
         });
       }
     });
