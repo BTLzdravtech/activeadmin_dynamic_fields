@@ -21,19 +21,34 @@ function dfEvalCondition(el, args, on_change) {
   }
   else if(args.eq) {
     if (args.eq.indexOf('|') == -1) {
-      return el.val() == args.eq;
+      if (el.val() == undefined || el.val() == null || el.val() == "") {
+        return -1;
+      } else {
+        return el.val() == args.eq;
+      }
     } else {
+      var result = -1;
       var multiArgs = args.eq.split('|');
-      return multiArgs.indexOf(el.val());
+      $.each(multiArgs, function(index, item) {
+        if (item.indexOf(',') == -1) {
+          if (item == el.val()) {
+            result = index;
+            return false;
+          }
+        } else {
+          $.each(item.split(','), function(index2, item2) {
+            if (item2 == el.val()) {
+              result = index;
+              return false;
+            }
+          })
+        }
+      });
+      return result;
     }
   }
   else if(args.not) {
-    if (args.eq.indexOf('|') == -1) {
-      return el.val() != args.not;
-    } else {
-      var multiArgs = args.eq.split('|');
-      return ((multiArgs.indexOf(el.val()) == -1) ? true : false)
-    }
+    return el.val() != args.not;
   }
   return undefined;
 }
@@ -41,13 +56,26 @@ function dfEvalCondition(el, args, on_change) {
 // Prepare a field
 function dfSetupField(el) {
   var action = el.data('action');
-  var target, args = {};
+  var target, dataTarget, args = {};
   args.if = el.data('if');
   args.eq = el.data('eq');
   args.not = el.data('not');
   args.fn = el.data('function');
-  if(el.data('target')) target = el.closest('form').find(el.data('target'));
-  else if(el.data('gtarget')) target = $(el.data('gtarget'));
+  if(el.data('target')) {
+    dataTarget = el.data('target');
+    if (dataTarget.indexOf('|') == -1) {
+      target = el.closest('form').find(dataTarget);
+    } else {
+      target = [];
+      $.each(dataTarget.split('|'), function(index, item) {
+        target.push(el.closest('form').find(item).get(0));
+      });
+      target = $(target)
+    }
+  }
+  else if(el.data('gtarget')) {
+    target = $(el.data('gtarget'));
+  }
   if(action == 'hide') {
     var result = dfEvalCondition(el, args, false);
     if (typeof result === "boolean"){
@@ -60,7 +88,7 @@ function dfSetupField(el) {
       }
     } else if(typeof result === "number") {
       target.each(function(index) {
-        if (index == result) {
+        if (index == result || result == -1) {
           target.eq(index).hide()
           target.eq(index).find('.validatebox-text').validatebox('options').novalidate = true
         } else {
@@ -82,7 +110,7 @@ function dfSetupField(el) {
         }
       } else if(typeof result === "number") {
         target.each(function(index) {
-          if (index == result) {
+          if (index == result || result == -1) {
             target.eq(index).hide()
             target.eq(index).find('.validatebox-text').validatebox('options').novalidate = true
           } else {
