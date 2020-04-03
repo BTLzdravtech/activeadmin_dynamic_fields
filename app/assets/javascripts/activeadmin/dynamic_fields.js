@@ -93,56 +93,73 @@ function dfSetupField(el) {
     } else {
       target = [];
       $.each(dataTarget.split('|'), function(index, item) {
-        target.push(el.closest('form').find(item).get(0));
+        target.push(item);
       });
-      target = $(target)
     }
   }
   else if(el.data('gtarget')) {
     target = $(el.data('gtarget'));
   }
   if(action == 'hide') {
-    var result = dfEvalCondition(el, args, false);
-    if (typeof result === "boolean"){
-      if (result) {
-        target.hide()
-        target.find('.validatebox-text').validatebox('options').novalidate = true
-      } else {
-        target.show()
-        target.find('.validatebox-text').validatebox('options').novalidate = false
-      }
-    } else if(typeof result === "number") {
-      target.each(function(index) {
-        if (index == result || result == -1) {
-          target.eq(index).hide()
-          target.eq(index).find('.validatebox-text').validatebox('options').novalidate = true
+    if (el.closest('li').is(':visible')) {
+      var result = dfEvalCondition(el, args, false);
+      if (typeof result === "boolean") {
+        if (result) {
+          target.hide();
+          if (target.find('.validatebox-text').validatebox('options').required == true) {
+            target.find('.validatebox-text').validatebox('options').novalidate = true;
+          }
         } else {
-          target.eq(index).show()
-          target.eq(index).find('.validatebox-text').validatebox('options').novalidate = false
+          target.show();
+          if (target.find('.validatebox-text').validatebox('options').required == true) {
+            target.find('.validatebox-text').validatebox('options').novalidate = false;
+          }
         }
-        // index == result ? target.eq(index).hide() : target.eq(index).show()
-      });
+      } else if (typeof result === "number") {
+        $.each(target, function (index, item) {
+          if (index == result || result == -1) {
+            el.closest('form').find(item).hide();
+            if (el.closest('form').find(item).find('.validatebox-text').validatebox('options').required == true) {
+              el.closest('form').find(item).find('.validatebox-text').validatebox('options').novalidate = true;
+            }
+          } else {
+            el.closest('form').find(item).show();
+            el.closest('form').find(item).find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
+            if (el.closest('form').find(item).find('.validatebox-text').validatebox('options').required == true) {
+              el.closest('form').find(item).find('.validatebox-text').validatebox('options').novalidate = false;
+            }
+          }
+        });
+      }
     }
     el.on('change', function(event) {
       var result = dfEvalCondition($(this), args, true);
       if (typeof result === "boolean"){
         if (result) {
           target.hide()
-          target.find('.validatebox-text').validatebox('options').novalidate = true
+          if (target.find('.validatebox-text').validatebox('options').required == true) {
+            target.find('.validatebox-text').validatebox('options').novalidate = true
+          }
         } else {
           target.show()
-          target.find('.validatebox-text').validatebox('options').novalidate = false
+          if (target.find('.validatebox-text').validatebox('options').required == true) {
+            target.find('.validatebox-text').validatebox('options').novalidate = false
+          }
         }
       } else if(typeof result === "number") {
-        target.each(function(index) {
+        $.each(target, function(index, item) {
           if (index == result || result == -1) {
-            target.eq(index).hide()
-            target.eq(index).find('.validatebox-text').validatebox('options').novalidate = true
+            el.closest('form').find(item).hide();
+            if (el.closest('form').find(item).find('.validatebox-text').validatebox('options').required == true) {
+              el.closest('form').find(item).find('.validatebox-text').validatebox('options').novalidate = true;
+            }
           } else {
-            target.eq(index).show()
-            target.eq(index).find('.validatebox-text').validatebox('options').novalidate = false
+            el.closest('form').find(item).show();
+            el.closest('form').find(item).find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
+            if (el.closest('form').find(item).find('.validatebox-text').validatebox('options').required == true) {
+              el.closest('form').find(item).find('.validatebox-text').validatebox('options').novalidate = false;
+            }
           }
-          // index == result ? target.eq(index).hide() : target.eq(index).show()
         });
       }
     });
