@@ -28,20 +28,45 @@ function dfEvalCondition(el, args, on_change) {
       }
     } else {
       var result = -1;
+      var targetAll;
       var multiArgs = args.eq.split('|');
       $.each(multiArgs, function(index, item) {
         if (item.indexOf(',') == -1) {
+          targetAll = false;
+          if (item.startsWith('*')) {
+            targetAll = true;
+            item = item.substr(1);
+          }
           if (item == el.val()) {
-            result = index;
+            if (targetAll) {
+              result = -1;
+            } else {
+              result = index;
+            }
             return false;
           }
         } else {
+          var foundInSplits = false;
           $.each(item.split(','), function(index2, item2) {
+            targetAll = false;
+            if (item2.startsWith('*')) {
+              targetAll = true;
+              item2 = item2.substr(1);
+            }
             if (item2 == el.val()) {
-              result = index;
+              if (targetAll) {
+                result = -1;
+                foundInSplits = true;
+              } else {
+                result = index;
+                foundInSplits = true;
+              }
               return false;
             }
           })
+          if (foundInSplits) {
+            return false;
+          }
         }
       });
       return result;
