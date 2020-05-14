@@ -104,61 +104,81 @@ function dfSetupField(el) {
     if (el.closest('li').is(':visible')) {
       var result = dfEvalCondition(el, args, false);
       if (typeof result === "boolean") {
+        var validateBoxes = target.find('.validatebox-text')
         if (result) {
           target.hide();
-          if (target.find('.validatebox-text').validatebox('options').required == true) {
-            target.find('.validatebox-text').validatebox('options').novalidate = true;
-          }
+          validateBoxes.each(function() {
+            if ($(this).validatebox('options').required == true) {
+              $(this).validatebox('options').novalidate = true
+            }
+          })
         } else {
           target.show();
-          if (target.find('.validatebox-text').validatebox('options').required == true) {
-            target.find('.validatebox-text').validatebox('options').novalidate = false;
-          }
+          validateBoxes.each(function() {
+            if ($(this).validatebox('options').required == true) {
+              $(this).validatebox('options').novalidate = false
+            }
+          })
         }
       } else if (typeof result === "number") {
         $.each(target, function (index, item) {
+          var validateBoxes = el.closest('form').find(item).find('.validatebox-text')
           if (index == result || result == -1) {
             el.closest('form').find(item).hide();
-            if (el.closest('form').find(item).find('.validatebox-text').validatebox('options').required == true) {
-              el.closest('form').find(item).find('.validatebox-text').validatebox('options').novalidate = true;
-            }
+            validateBoxes.each(function() {
+              if ($(this).validatebox('options').required == true) {
+                $(this).validatebox('options').novalidate = true
+              }
+            })
           } else {
             el.closest('form').find(item).show();
             el.closest('form').find(item).find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
-            if (el.closest('form').find(item).find('.validatebox-text').validatebox('options').required == true) {
-              el.closest('form').find(item).find('.validatebox-text').validatebox('options').novalidate = false;
-            }
+            validateBoxes.each(function() {
+              if ($(this).validatebox('options').required == true) {
+                $(this).validatebox('options').novalidate = false
+              }
+            })
           }
         });
       }
     }
     el.on('change', function(event) {
       var result = dfEvalCondition($(this), args, true);
-      if (typeof result === "boolean"){
+      if (typeof result === "boolean") {
+        var validateBoxes = target.find('.validatebox-text')
         if (result) {
           target.hide()
-          if (target.find('.validatebox-text').validatebox('options').required == true) {
-            target.find('.validatebox-text').validatebox('options').novalidate = true
-          }
+          validateBoxes.each(function() {
+            if ($(this).validatebox('options').required == true) {
+              $(this).validatebox('options').novalidate = true
+            }
+          })
         } else {
           target.show()
-          if (target.find('.validatebox-text').validatebox('options').required == true) {
-            target.find('.validatebox-text').validatebox('options').novalidate = false
-          }
+          validateBoxes.each(function() {
+            if ($(this).validatebox('options').required == true) {
+              $(this).validatebox('options').novalidate = false
+            }
+          })
         }
       } else if(typeof result === "number") {
         $.each(target, function(index, item) {
+          var validateBoxes = el.closest('form').find(item).find('.validatebox-text')
           if (index == result || result == -1) {
             el.closest('form').find(item).hide();
-            if (el.closest('form').find(item).find('.validatebox-text').validatebox('options').required == true) {
-              el.closest('form').find(item).find('.validatebox-text').validatebox('options').novalidate = true;
-            }
+            validateBoxes.each(function() {
+              if ($(this).validatebox('options').required == true) {
+                $(this).validatebox('options').novalidate = true
+              }
+            })
           } else {
             el.closest('form').find(item).show();
             el.closest('form').find(item).find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
-            if (el.closest('form').find(item).find('.validatebox-text').validatebox('options').required == true) {
-              el.closest('form').find(item).find('.validatebox-text').validatebox('options').novalidate = false;
-            }
+            validateBoxes.each(function() {
+              if ($(this).validatebox('options').required == true) {
+                $(this).validatebox('options').novalidate = false
+              }
+            })
           }
         });
       }
