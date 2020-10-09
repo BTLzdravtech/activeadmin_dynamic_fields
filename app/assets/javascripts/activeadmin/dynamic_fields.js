@@ -38,7 +38,9 @@ function dfEvalCondition(el, args, on_change) {
         }
       }
     } else {
-      var result = -1;
+      // show all - result = -2
+      // hide all - result = -1
+      var result = -2;
       var targetAll;
       var multiArgs = args.eq.split('|');
       $.each(multiArgs, function(index, item) {
