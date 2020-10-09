@@ -24,7 +24,18 @@ function dfEvalCondition(el, args, on_change) {
       if (el.val() == undefined || el.val() == null || el.val() == "") {
         return -1;
       } else {
-        return el.val() == args.eq;
+        if (args.eq.indexOf(',') == -1) {
+          return el.val() == args.eq;
+        } else {
+          var result = false;
+          $.each(args.eq.split(','), function(index, item) {
+            if (item == el.val()) {
+              result = true;
+              return false;
+            }
+          })
+          return result;
+        }
       }
     } else {
       var result = -1;
