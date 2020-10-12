@@ -43,6 +43,9 @@ function dfEvalCondition(el, args, on_change) {
       var result = -2;
       var targetAll;
       var multiArgs = args.eq.split('|');
+      if (el.val() == undefined || el.val() == null || el.val() == "") {
+        return -1;
+      }
       $.each(multiArgs, function(index, item) {
         if (item.indexOf(',') == -1) {
           targetAll = false;
