@@ -117,7 +117,12 @@ function dfSetupField(el) {
     target = $(el.data('gtarget'));
   }
   if(action == 'hide') {
-    if (el.closest('li').is(':visible')) {
+    var isInAccordion = false
+    var accordion = el.closest('.easyui-accordion')
+    if (accordion.length) {
+      isInAccordion = accordion.accordion('getPanelIndex', accordion.accordion('getSelected')) !== accordion.accordion('getPanelIndex', accordion.accordion('getPanel', el.closest('.panel').find('.panel-title').text()))
+    }
+    if (el.closest('li').is(':visible') || isInAccordion) {
       var result = dfEvalCondition(el, args, false);
       if (typeof result === "boolean") {
         var validateBoxes = target.find('.validatebox-text')
@@ -130,6 +135,7 @@ function dfSetupField(el) {
           })
         } else {
           target.show();
+          target.find('.btl-textbox').textbox('resize')
           validateBoxes.each(function() {
             if ($(this).validatebox('options').required == true) {
               $(this).validatebox('options').novalidate = false
@@ -148,6 +154,7 @@ function dfSetupField(el) {
             })
           } else {
             el.closest('form').find(item).show();
+            el.closest('form').find(item).find('.btl-textbox').textbox('resize')
             el.closest('form').find(item).find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
             validateBoxes.each(function() {
               if ($(this).validatebox('options').required == true) {
@@ -171,6 +178,7 @@ function dfSetupField(el) {
           })
         } else {
           target.show()
+          target.find('.btl-textbox').textbox('resize')
           validateBoxes.each(function() {
             if ($(this).validatebox('options').required == true) {
               $(this).validatebox('options').novalidate = false
@@ -189,6 +197,7 @@ function dfSetupField(el) {
             })
           } else {
             el.closest('form').find(item).show();
+            el.closest('form').find(item).find('.btl-textbox').textbox('resize')
             el.closest('form').find(item).find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
             validateBoxes.each(function() {
               if ($(this).validatebox('options').required == true) {
