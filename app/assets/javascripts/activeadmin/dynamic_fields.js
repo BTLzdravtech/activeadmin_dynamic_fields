@@ -122,7 +122,7 @@ function dfSetupField(el) {
     if (accordion.length) {
       isInAccordion = accordion.accordion('getPanelIndex', accordion.accordion('getSelected')) !== accordion.accordion('getPanelIndex', accordion.accordion('getPanel', el.closest('.panel').find('.panel-title').text()))
     }
-    if (el.closest('li').is(':visible') || isInAccordion) {
+    if (el.closest('li').is(':visible') || (isInAccordion && target.css('display') !== 'none')) {
       var result = dfEvalCondition(el, args, false);
       if (typeof result === "boolean") {
         var validateBoxes = target.find('.validatebox-text')
