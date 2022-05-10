@@ -143,7 +143,12 @@ function dfSetupField(el) {
           })
         }
       } else if (typeof result === "number") {
-        $.each(target, function (index, item) {
+        var target_array = [].concat(target)
+        if (result > -1) {
+          target_array.push(target_array.splice(result, 1)[0])
+          result = target_array.length - 1
+        }
+        $.each(target_array, function (index, item) {
           var validateBoxes = el.closest('form').find(item).find('.validatebox-text')
           if (index == result || result == -1) {
             el.closest('form').find(item).hide();
@@ -186,7 +191,12 @@ function dfSetupField(el) {
           })
         }
       } else if(typeof result === "number") {
-        $.each(target, function(index, item) {
+        var target_array = [].concat(target)
+        if (result > -1) {
+          target_array.push(target_array.splice(result, 1)[0])
+          result = target_array.length - 1
+        }
+        $.each(target_array, function(index, item) {
           var validateBoxes = el.closest('form').find(item).find('.validatebox-text')
           if (index == result || result == -1) {
             el.closest('form').find(item).hide();
