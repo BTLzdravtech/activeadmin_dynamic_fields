@@ -136,6 +136,7 @@ function dfSetupField(el) {
         } else {
           target.show();
           target.find('.btl-textbox').textbox('resize')
+          target.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
           validateBoxes.each(function() {
             if ($(this).validatebox('options').required == true) {
               $(this).validatebox('options').novalidate = false
@@ -184,6 +185,7 @@ function dfSetupField(el) {
         } else {
           target.show()
           target.find('.btl-textbox').textbox('resize')
+          target.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
           validateBoxes.each(function() {
             if ($(this).validatebox('options').required == true) {
               $(this).validatebox('options').novalidate = false
