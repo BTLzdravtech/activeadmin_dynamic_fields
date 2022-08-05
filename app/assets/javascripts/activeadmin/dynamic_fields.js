@@ -122,9 +122,9 @@ function dfSetupField(el) {
     if (accordion.length) {
       isInAccordion = accordion.accordion('getPanelIndex', accordion.accordion('getSelected')) !== accordion.accordion('getPanelIndex', accordion.accordion('getPanel', el.closest('.panel').find('.panel-title').text()))
     }
-    if (el.closest('li').is(':visible') || (isInAccordion && target.css('display') !== 'none')) {
+    if (el.closest('li').is(':visible') || isInAccordion) {
       var result = dfEvalCondition(el, args, false);
-      if (typeof result === "boolean") {
+      if (typeof result === "boolean" && target.css('display') !== 'none') {
         var validateBoxes = target.find('.validatebox-text')
         if (result) {
           target.hide();
@@ -135,7 +135,7 @@ function dfSetupField(el) {
           })
         } else {
           target.show();
-          target.find('.btl-textbox').textbox('resize')
+          target.find('.textbox-f').textbox('resize')
           target.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
           validateBoxes.each(function() {
             if ($(this).validatebox('options').required == true) {
@@ -150,23 +150,26 @@ function dfSetupField(el) {
           result = target_array.length - 1
         }
         $.each(target_array, function (index, item) {
-          var validateBoxes = el.closest('form').find(item).find('.validatebox-text')
-          if (index == result || result == -1) {
-            el.closest('form').find(item).hide();
-            validateBoxes.each(function() {
-              if ($(this).validatebox('options').required == true) {
-                $(this).validatebox('options').novalidate = true
-              }
-            })
-          } else {
-            el.closest('form').find(item).show();
-            el.closest('form').find(item).find('.btl-textbox').textbox('resize')
-            el.closest('form').find(item).find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
-            validateBoxes.each(function() {
-              if ($(this).validatebox('options').required == true) {
-                $(this).validatebox('options').novalidate = false
-              }
-            })
+          var targetFromArray = el.closest('form').find(item)
+          if (targetFromArray.css('display') !== 'none') {
+            var validateBoxes = targetFromArray.find('.validatebox-text')
+            if (index == result || result == -1) {
+              targetFromArray.hide();
+              validateBoxes.each(function () {
+                if ($(this).validatebox('options').required == true) {
+                  $(this).validatebox('options').novalidate = true
+                }
+              })
+            } else {
+              targetFromArray.show();
+              targetFromArray.find('.textbox-f').textbox('resize')
+              targetFromArray.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
+              validateBoxes.each(function () {
+                if ($(this).validatebox('options').required == true) {
+                  $(this).validatebox('options').novalidate = false
+                }
+              })
+            }
           }
         });
       }
@@ -184,7 +187,7 @@ function dfSetupField(el) {
           })
         } else {
           target.show()
-          target.find('.btl-textbox').textbox('resize')
+          target.find('.textbox-f').textbox('resize')
           target.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
           validateBoxes.each(function() {
             if ($(this).validatebox('options').required == true) {
@@ -199,18 +202,19 @@ function dfSetupField(el) {
           result = target_array.length - 1
         }
         $.each(target_array, function(index, item) {
-          var validateBoxes = el.closest('form').find(item).find('.validatebox-text')
+          var targetFromArray = el.closest('form').find(item)
+          var validateBoxes = targetFromArray.find('.validatebox-text')
           if (index == result || result == -1) {
-            el.closest('form').find(item).hide();
+            targetFromArray.hide();
             validateBoxes.each(function() {
               if ($(this).validatebox('options').required == true) {
                 $(this).validatebox('options').novalidate = true
               }
             })
           } else {
-            el.closest('form').find(item).show();
-            el.closest('form').find(item).find('.btl-textbox').textbox('resize')
-            el.closest('form').find(item).find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
+            targetFromArray.show();
+            targetFromArray.find('.textbox-f').textbox('resize')
+            targetFromArray.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
             validateBoxes.each(function() {
               if ($(this).validatebox('options').required == true) {
                 $(this).validatebox('options').novalidate = false
