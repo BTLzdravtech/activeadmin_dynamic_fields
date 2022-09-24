@@ -124,24 +124,55 @@ function dfSetupField(el) {
     }
     if (el.closest('li').is(':visible') || isInAccordion) {
       var result = dfEvalCondition(el, args, false);
-      if (typeof result === "boolean" && target.css('display') !== 'none') {
-        var validateBoxes = target.find('.validatebox-text')
-        if (result) {
-          target.hide();
-          validateBoxes.each(function() {
-            if ($(this).validatebox('options').required == true) {
-              $(this).validatebox('options').novalidate = true
+      if (typeof result === "boolean") {
+        if ($.isArray(target)) {
+          $.each(target, function (index, item) {
+            if (index > 0) {
+              result = !result
+            }
+            var targetFromArray = el.closest('form').find(item)
+            if (targetFromArray.css('display') !== 'none') {
+              var validateBoxes = targetFromArray.find('.validatebox-text')
+              if (result) {
+                targetFromArray.hide();
+                validateBoxes.each(function () {
+                  if ($(this).validatebox('options').required == true) {
+                    $(this).validatebox('options').novalidate = true
+                  }
+                })
+              } else {
+                targetFromArray.show();
+                targetFromArray.find('.textbox-f').textbox('resize')
+                targetFromArray.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
+                validateBoxes.each(function () {
+                  if ($(this).validatebox('options').required == true) {
+                    $(this).validatebox('options').novalidate = false
+                  }
+                })
+              }
             }
           })
         } else {
-          target.show();
-          target.find('.textbox-f').textbox('resize')
-          target.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
-          validateBoxes.each(function() {
-            if ($(this).validatebox('options').required == true) {
-              $(this).validatebox('options').novalidate = false
+          if (target.css('display') !== 'none') {
+            var validateBoxes = target.find('.validatebox-text')
+            if (result) {
+              target.hide();
+              validateBoxes.each(function() {
+                if ($(this).validatebox('options').required == true) {
+                  $(this).validatebox('options').novalidate = true
+                }
+              })
+            } else {
+              target.show();
+              target.find('.textbox-f').textbox('resize')
+              target.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
+              validateBoxes.each(function() {
+                if ($(this).validatebox('options').required == true) {
+                  $(this).validatebox('options').novalidate = false
+                }
+              })
             }
-          })
+          }
         }
       } else if (typeof result === "number") {
         var target_array = [].concat(target)
@@ -177,23 +208,50 @@ function dfSetupField(el) {
     el.on('change', function(event) {
       var result = dfEvalCondition($(this), args, true);
       if (typeof result === "boolean") {
-        var validateBoxes = target.find('.validatebox-text')
-        if (result) {
-          target.hide()
-          validateBoxes.each(function() {
-            if ($(this).validatebox('options').required == true) {
-              $(this).validatebox('options').novalidate = true
+        if ($.isArray(target)) {
+          $.each(target, function (index, item) {
+            if (index > 0) {
+              result = !result
+            }
+            var targetFromArray = el.closest('form').find(item)
+            var validateBoxes = targetFromArray.find('.validatebox-text')
+            if (result) {
+              targetFromArray.hide();
+              validateBoxes.each(function () {
+                if ($(this).validatebox('options').required == true) {
+                  $(this).validatebox('options').novalidate = true
+                }
+              })
+            } else {
+              targetFromArray.show();
+              targetFromArray.find('.textbox-f').textbox('resize')
+              targetFromArray.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
+              validateBoxes.each(function () {
+                if ($(this).validatebox('options').required == true) {
+                  $(this).validatebox('options').novalidate = false
+                }
+              })
             }
           })
         } else {
-          target.show()
-          target.find('.textbox-f').textbox('resize')
-          target.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
-          validateBoxes.each(function() {
-            if ($(this).validatebox('options').required == true) {
-              $(this).validatebox('options').novalidate = false
-            }
-          })
+          var validateBoxes = target.find('.validatebox-text')
+          if (result) {
+            target.hide()
+            validateBoxes.each(function () {
+              if ($(this).validatebox('options').required == true) {
+                $(this).validatebox('options').novalidate = true
+              }
+            })
+          } else {
+            target.show()
+            target.find('.textbox-f').textbox('resize')
+            target.find('[data-if], [data-function], [data-eq], [data-not]').trigger('change');
+            validateBoxes.each(function () {
+              if ($(this).validatebox('options').required == true) {
+                $(this).validatebox('options').novalidate = false
+              }
+            })
+          }
         }
       } else if(typeof result === "number") {
         var target_array = [].concat(target)
