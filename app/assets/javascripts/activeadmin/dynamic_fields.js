@@ -127,7 +127,7 @@ function dfSetupField(el) {
       if (typeof result === "boolean") {
         if ($.isArray(target)) {
           $.each(target, function (index, item) {
-            if (index > 0) {
+            if (index === 1) {
               result = !result
             }
             var targetFromArray = el.closest('form').find(item)
@@ -210,7 +210,7 @@ function dfSetupField(el) {
       if (typeof result === "boolean") {
         if ($.isArray(target)) {
           $.each(target, function (index, item) {
-            if (index > 0) {
+            if (index === 1) {
               result = !result
             }
             var targetFromArray = el.closest('form').find(item)
